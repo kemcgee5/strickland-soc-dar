@@ -22,6 +22,6 @@ jobs:
     steps:
       - name: Call send-shift-emails endpoint
         run: |
-          curl -sS -X POST "https://YOUR-VERCEL-PROJECT.vercel.app/api/send-shift-emails" \
+          curl -sS -X POST "https://strickland-soc-dar.vercel.app/api/send-shift-emails" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             -w "\nHTTP %{http_code}\n"
