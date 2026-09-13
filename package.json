@@ -1,0 +1,13 @@
+{
+  "name": "strickland-soc-dar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Strickland SOC Daily Activity Report tool (static dashboard) + the daily automatic shift-report email function.",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "puppeteer-core": "^23.0.0",
+    "@sparticuz/chromium": "^131.0.0"
+  }
+}
