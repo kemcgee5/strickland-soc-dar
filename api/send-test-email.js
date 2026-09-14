@@ -64,13 +64,23 @@ module.exports = async (req, res) => {
     }
   }
 
-  const { AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, SENDER_EMAIL, RECIPIENT_EMAIL } = process.env;
-  const missing = ["AZURE_TENANT_ID", "AZURE_CLIENT_ID", "AZURE_CLIENT_SECRET", "SENDER_EMAIL", "RECIPIENT_EMAIL"]
-    .filter(k => !process.env[k]);
+  const keys = ["AZURE_TENANT_ID", "AZURE_CLIENT_ID", "AZURE_CLIENT_SECRET", "SENDER_EMAIL", "RECIPIENT_EMAIL"];
+  const missing = keys.filter(k => !process.env[k]);
+
   if (missing.length) {
-    res.status(500).json({ ok: false, error: "missing env vars: " + missing.join(", ") });
+    // TEMPORARY DEBUG -- reveals no secret values, only whether each
+    // variable is present and how many characters long it is. Safe to
+    // leave in briefly; we'll remove this once things are working.
+    const debug = {};
+    for (const k of keys) {
+      const v = process.env[k];
+      debug[k] = v ? { present: true, length: v.length } : { present: false };
+    }
+    res.status(500).json({ ok: false, error: "missing env vars: " + missing.join(", "), debug });
     return;
   }
+
+  const { AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, SENDER_EMAIL, RECIPIENT_EMAIL } = process.env;
 
   try {
     const token = await getGraphToken(AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET);
