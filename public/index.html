@@ -259,6 +259,11 @@ dialog.pick p{font-size:12.5px;color:var(--fog);margin:0 0 12px}
   .card-h{border-bottom:1px solid #000;padding-bottom:5px;margin-bottom:0}
   .cbnum{font-size:19pt;color:#000}
   .cbcity{font-size:14pt;color:#000}
+  /* Closed-out locations show dimmed + struck-through on screen so staff can
+     see at a glance what's wrapped up -- but the printed/PDF report should
+     read like a normal completed entry, not "crossed off". */
+  .card.is-closed{opacity:1}
+  .card.is-closed .cbnum,.card.is-closed .cbcity{text-decoration:none}
   .card-h .sp{display:none}
   .sect{margin-top:13px}
   .sect > .eyebrow{color:#000;font-size:8.5pt;letter-spacing:.14em}
