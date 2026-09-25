@@ -834,6 +834,7 @@ function newStore(num){
     mode:"work",
     mgr:"",
     co:"", contact:"", cell:"", crew:"", ete:"", exit:"", calledOut:"", cleaningCrew:"",
+    extraContractors:[],
     alarmAt:"", alarmZone:"", alarmType:"", cams:"", dispatch:"", dispatchWho:"", resolution:"",
     esc:false, escNote:"",
     closed:false, closedAt:"", closedBy:"",
@@ -1045,6 +1046,12 @@ function cardEl(st){
     inp.oninput = ()=>{ st[f]=inp.value; save(); };
     inp.onchange = ()=>{ st[f]=inp.value; render(); };
   });
+  c.querySelectorAll("[data-xw]").forEach(inp=>{
+    const f = inp.dataset.xw, rec = (st.extraContractors||[]).find(x=>x.id===inp.dataset.xid);
+    if(!rec) return;
+    inp.oninput = ()=>{ rec[f]=inp.value; save(); };
+    inp.onchange = ()=>{ rec[f]=inp.value; render(); };
+  });
   c.querySelectorAll("[data-mode]").forEach(b=> b.onclick = ()=>{ st.mode=b.dataset.mode; render(); });
   const time = c.querySelector('[data-c="time"]'), type = c.querySelector('[data-c="type"]'), note = c.querySelector('[data-c="note"]');
   const doAdd = ()=>{
@@ -1071,6 +1078,15 @@ function cardEl(st){
       if(a==="rm"){ if(confirm("Remove CB"+pad4(st.num)+" and its "+st.log.length+" log entries from this shift?")){
         S.stores = S.stores.filter(x=>x.id!==st.id);
         active = S.stores.length ? S.stores[0].id : null; render(); } }
+      if(a==="addContractor"){
+        if(!st.extraContractors) st.extraContractors = [];
+        st.extraContractors.push({ id:"xc"+(seq++), co:"", contact:"", cell:"", crew:"" });
+        save(); render();
+      }
+      if(a==="rmContractor"){
+        st.extraContractors = (st.extraContractors||[]).filter(x=>x.id!==b.dataset.xid);
+        save(); render();
+      }
     };
   });
   if(note) note.onkeydown = e=>{ if(e.key==="Enter"){ e.preventDefault(); doAdd(); } };
@@ -1081,6 +1097,23 @@ function cardEl(st){
 }
 
 function workBlock(st){
+  if(!st.extraContractors) st.extraContractors = [];
+  const extra = st.extraContractors.map((x,i)=>`
+    <div class="box contractor-extra" style="margin-top:10px">
+      <div class="f" style="margin-bottom:8px">
+        <span style="font-family:var(--disp);text-transform:uppercase;letter-spacing:.08em;font-size:10.5px;color:var(--fog)">Additional contractor ${i+2}</span>
+      </div>
+      <div class="grid g2">
+        <label class="f"><span>Company</span><input class="in" data-xw="co" data-xid="${x.id}" value="${esc(x.co)}" placeholder="Company name"></label>
+        <label class="f"><span>Site contact</span><input class="in" data-xw="contact" data-xid="${x.id}" value="${esc(x.contact)}" placeholder="Name"></label>
+      </div>
+      <div class="grid g2" style="margin-top:12px">
+        <label class="f"><span>Contact cell</span><input class="in mono" data-xw="cell" data-xid="${x.id}" value="${esc(x.cell)}" placeholder="615-573-6212"></label>
+        <label class="f"><span>Crew size</span><input class="in mono" data-xw="crew" data-xid="${x.id}" value="${esc(x.crew)}" inputmode="numeric" placeholder="2"></label>
+      </div>
+      <button class="btn ghost sm danger no-print" data-act="rmContractor" data-xid="${x.id}" style="margin-top:10px">Remove this contractor</button>
+    </div>`).join("");
+
   return `
   <div class="sect">
     <div class="eyebrow">Contractor on site</div>
@@ -1109,6 +1142,8 @@ function workBlock(st){
           </select></label>
       </div>
     </div>
+    ${extra}
+    <button class="btn ghost sm no-print" data-act="addContractor" style="margin-top:12px">+ Add another contractor</button>
   </div>`;
 }
 
