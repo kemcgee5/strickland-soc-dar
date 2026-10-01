@@ -1080,7 +1080,7 @@ function cardEl(st){
         active = S.stores.length ? S.stores[0].id : null; render(); } }
       if(a==="addContractor"){
         if(!st.extraContractors) st.extraContractors = [];
-        st.extraContractors.push({ id:"xc"+(seq++), co:"", contact:"", cell:"", crew:"" });
+        st.extraContractors.push({ id:"xc"+(seq++), co:"", contact:"", cell:"", crew:"", ete:"", exit:"", calledOut:"" });
         save(); render();
       }
       if(a==="rmContractor"){
@@ -1110,6 +1110,17 @@ function workBlock(st){
       <div class="grid g2" style="margin-top:12px">
         <label class="f"><span>Contact cell</span><input class="in mono" data-xw="cell" data-xid="${x.id}" value="${esc(x.cell)}" placeholder="615-573-6212"></label>
         <label class="f"><span>Crew size</span><input class="in mono" data-xw="crew" data-xid="${x.id}" value="${esc(x.crew)}" inputmode="numeric" placeholder="2"></label>
+      </div>
+      <div class="grid g3" style="margin-top:12px">
+        <label class="f"><span>Stated ETE</span><input class="in mono" type="time" data-xw="ete" data-xid="${x.id}" value="${esc(x.ete)}"></label>
+        <label class="f"><span>Actual departure</span><input class="in mono" type="time" data-xw="exit" data-xid="${x.id}" value="${esc(x.exit)}"></label>
+        <label class="f"><span>Called SOC on exit</span>
+          <select class="in" data-xw="calledOut" data-xid="${x.id}">
+            <option value="" ${x.calledOut===""?"selected":""}>—</option>
+            <option value="yes" ${x.calledOut==="yes"?"selected":""}>Yes</option>
+            <option value="no" ${x.calledOut==="no"?"selected":""}>No</option>
+            <option value="na" ${x.calledOut==="na"?"selected":""}>N/A</option>
+          </select></label>
       </div>
       <button class="btn ghost sm danger no-print" data-act="rmContractor" data-xid="${x.id}" style="margin-top:10px">Remove this contractor</button>
     </div>`).join("");
